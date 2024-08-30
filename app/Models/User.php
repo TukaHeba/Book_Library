@@ -62,4 +62,25 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Get all borrowing records for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function borrowingRecords()
+    {
+        return $this->hasMany(BorrowRecords::class);
+    }
+
+    /**
+     * Get all ratings the user has submitted.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
 }

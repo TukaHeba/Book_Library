@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Services\ApiResponseService;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -25,46 +26,72 @@ class AuthController extends Controller
     }
 
     /**
-     * Handles user login requests.
-     *
-     * @param LoginRequest $request 
-     * @return \Illuminate\Http\JsonResponse 
+     * Summary of login
+     * @param \App\Http\Requests\LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        return $this->authService->login($credentials);
+
+        $response = $this->authService->login($credentials);
+
+        if ($response['status'] === 'error') {
+            ApiResponseService::error($response['message'], $response['status'], $response['code']);
+        }
+
+        return ApiResponseService::success([
+            'user' => $response['user'],
+            'authorisation' => [
+                'token' => $response['token'],
+                'type' => 'bearer',
+            ]
+        ], 'Login Successful', $response['code']);
     }
 
     /**
-     * Handles user registration requests.
-     *
-     * @param RegisterRequest $request 
-     * @return \Illuminate\Http\JsonResponse 
+     * Summary of register
+     * @param \App\Http\Requests\RegisterRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
-        return $this->authService->register($data);
+        $response = $this->authService->register($data);
+        return ApiResponseService::success([
+            'user' => $response['user'],
+            'authorisation' => [
+                'token' => $response['token'],
+                'type' => 'bearer',
+            ]
+        ], 'User created successfully', $response['code']);
     }
 
     /**
-     * Handles user logout requests.
-     *
-     * @return \Illuminate\Http\JsonResponse 
-     */
-    public function logout()
-    {
-        return $this->authService->logout();
-    }
-
-    /**
-     * Handles token refresh requests.
+     * Log out the current user.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    // public function refresh()
-    // {
-    //     return $this->authService->refresh();
-    // }
+    public function logout()
+    {
+        $response = $this->authService->logout();
+
+        return ApiResponseService::success(null, $response['message'], $response['code']);
+    }
+
+    /**
+     * Refresh the user's authentication token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return ApiResponseService::success([
+            'user' => Auth::user(),
+            'authorisation' => [
+                'token' => Auth::refresh(),
+                'type' => 'bearer',
+            ],
+        ], 'Token refreshed successfully', 200);
+    }
 }
