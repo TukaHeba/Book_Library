@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Services\ApiResponseService;
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
@@ -18,6 +20,20 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     * This method is called before validation starts to clean or normalize inputs.
+     * 
+     * Convert email to lowercase and trim white spaces if provided
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'email' => $this->email ? strtolower(trim($this->email)) : null,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -25,8 +41,38 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|max:30|email|unique:users,email',
-            'password' => 'required|min:8|max:30',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8|max:30',
+        ];
+    }
+    /**
+     * Define human-readable attribute names for validation errors.
+     * 
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'email' => 'email address',
+            'password' => 'password',
+        ];
+    }
+
+    /**
+     * Define custom error messages for validation failures.
+     * 
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Your email address is required.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.max' => 'Your email address cannot exceed 255 characters.',
+
+            'password.required' => 'A password is required.',
+            'password.min' => 'Your password must be at least 8 characters long.',
+            'password.max' => 'Your password cannot exceed 30 characters.',
         ];
     }
 
@@ -35,12 +81,34 @@ class LoginRequest extends FormRequest
      *
      * @param \Illuminate\Contracts\Validation\Validator $validator The validation instance.
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @return never
      */
-    protected function prepareValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
+        throw new HttpResponseException(
+            ApiResponseService::error($errors, 'Validation Errors', 422)
+        );
+    }
 
-        throw new HttpResponseException(ApiResponseService::error($errors, 'Validation Errors', 422));
+    /**
+     * Custom validation logic after the request has passed validation.
+     * 
+     * @return void
+     */
+    protected function passedValidation()
+    {
+        $user = User::where('email', $this->email)->first();
+
+        if (!$user) {
+            throw new HttpResponseException(
+                ApiResponseService::error(['The provided email does not exist.'], 'Authentication Error', 401)
+            );
+        }
+
+        if (!Hash::check($this->password, $user->password)) {
+            throw new HttpResponseException(
+                ApiResponseService::error(['The provided password is incorrect.'], 'Authentication Error', 401)
+            );
+        }
     }
 }
