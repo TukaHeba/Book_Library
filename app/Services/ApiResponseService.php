@@ -36,29 +36,36 @@ class ApiResponseService
     {
         return response()->json([
             'status' => 'error',
-            // 'message' => __($message), 
             'message' => trans($message),
             'data' => $data,
         ], $status);
     }
+
     /**
-     * Summary of paginated
+     * Generates a JSON response with paginated data.
      *
-     * @param \Illuminate\Pagination\LengthAwarePaginator $paginator
-     * @param string $message
-     * @param int $status
-     * @return \Illuminate\Http\JsonResponse
+     * Transforms the paginated items using the provided resource class and
+     * returns the transformed data along with pagination information.
+     *
+     * @param \Illuminate\Pagination\LengthAwarePaginator $paginator The paginator instance containing the items.
+     * @param string $resourceClass The resource class used to transform the paginated items.
+     * @param string $message Optional message to be included in the response.
+     * @param int $status HTTP status code.
+     * 
+     * @return \Illuminate\Http\JsonResponse A JSON response containing the transformed items and pagination details.
      */
-    public static function paginated(LengthAwarePaginator $paginator, $message = '', $status)
+    public static function paginated(LengthAwarePaginator $paginator, $resourceClass, $message = '', $status)
     {
+        $transformedItems = $resourceClass::collection($paginator->items());
+
         return response()->json([
             'status' => 'success',
-            'message' => trans($message), 
-            'data' => $paginator->items(),
+            'message' => trans($message),
+            'data' => $transformedItems,
             'pagination' => [
                 'total' => $paginator->total(),
                 'count' => $paginator->count(),
-                'per_page' => $paginator->perPage(), 
+                'per_page' => $paginator->perPage(),
                 'current_page' => $paginator->currentPage(),
                 'total_pages' => $paginator->lastPage(),
             ],

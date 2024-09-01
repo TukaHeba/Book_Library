@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Services\ApiResponseService;
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
-class RegisterRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -44,9 +44,9 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:50',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:30|confirmed',
+            'role' => 'required|string|exists:roles,name'
         ];
     }
-
     /**
      * Define human-readable attribute names for validation errors.
      * 

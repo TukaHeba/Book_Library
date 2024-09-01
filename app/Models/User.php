@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -83,4 +84,28 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Rating::class);
     }
 
+    /**
+     * Check if the authenticated user can perform an action on the given user.
+     * 
+     * @param User $user The user to check against.
+     * @return bool True if the authenticated user is an admin or the same user, false otherwise.
+     */
+    public function hasAction(User $user): bool
+    {
+        /** @var User $authUser */
+        $authUser = Auth::user();
+        return $authUser->hasRole('admin') || $authUser->id === $user->id;
+    }
+
+    /**
+     * Check if the authenticated user is an admin.
+     * 
+     * @return bool True if the authenticated user is an admin, false otherwise.
+     */
+    public function isAdmin(): bool
+    {
+        /** @var User $authUser */
+        $authUser = Auth::user();
+        return $authUser->hasRole('admin');
+    }
 }

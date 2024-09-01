@@ -66,13 +66,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'Your email address is required.',
-            'email.email' => 'Please provide a valid email address.',
-            'email.max' => 'Your email address cannot exceed 255 characters.',
-
-            'password.required' => 'A password is required.',
-            'password.min' => 'Your password must be at least 8 characters long.',
-            'password.max' => 'Your password cannot exceed 30 characters.',
+            'email.email' => 'The :attribute must be a valid email address.',
+            'required' => 'The :attribute field is required.',
+            'min' => 'The :attribute must be at least :min characters.',
+            'max' => 'The :attribute may not be greater than :max characters.',
         ];
     }
 

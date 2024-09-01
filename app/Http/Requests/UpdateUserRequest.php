@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Services\ApiResponseService;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class RegisterRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,11 +42,11 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:30|confirmed',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8|max:30',
+            'role' => 'required|string|exists:roles,name'
         ];
     }
-
     /**
      * Define human-readable attribute names for validation errors.
      * 
@@ -73,8 +73,6 @@ class RegisterRequest extends FormRequest
             'max' => 'The :attribute may not be greater than :max characters.',
             'min' => 'The :attribute must be at least :min characters.',
             'email.email' => 'The :attribute must be a valid email address.',
-            'email.unique' => 'The :attribute has already been taken.',
-            'password.confirmed' => 'The :attribute confirmation does not match.',
         ];
     }
 
