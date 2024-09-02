@@ -25,7 +25,7 @@ class StoreCategoryRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'name' => $this->name ? ucfirst(trim($this->name)) : null,
+            'name' => $this->name ? ucwords(trim($this->name)) : null,
         ]);
     }
 

@@ -52,13 +52,13 @@ class RatingSeeder extends Seeder
         Rating::create([
             'user_id' => 2,
             'book_id' => 1,
-            'rating' => 5,
+            'rating' => 4,
             'review' => 'Amazing',
         ]);
         Rating::create([
             'user_id' => 2,
             'book_id' => 2,
-            'rating' => 4,
+            'rating' => 3,
             'review' => 'Good',
         ]);
         Rating::create([
