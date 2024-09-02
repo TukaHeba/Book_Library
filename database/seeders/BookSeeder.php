@@ -99,7 +99,7 @@ class BookSeeder extends Seeder
             'author' => 'author10',
             'description' => 'description10',
             'category_id' => 4,
-            'available' => true,
+            'available' => false,
             'published_at' => '2024-02-12',
             'price' => 20.99,
         ]);
@@ -108,7 +108,7 @@ class BookSeeder extends Seeder
             'author' => 'author11',
             'description' => 'description11',
             'category_id' => 3,
-            'available' => true,
+            'available' => false,
             'published_at' => '2024-02-12',
             'price' => 20.99,
         ]);

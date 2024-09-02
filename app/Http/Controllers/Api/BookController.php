@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\BookResource;
 use App\Services\ApiResponseService;
 use App\Http\Requests\StoreBookRequest;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateBookRequest;
 
 class BookController extends Controller
@@ -23,10 +24,12 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $books = $this->bookService->getAllBooks();
+            $filters = $request->only(['author', 'category', 'available', 'price_order']);
+            $books = $this->bookService->getAllBooks($filters);
+
             return ApiResponseService::paginated($books, BookResource::class, 'Books retrieved successfully', 200);
         } catch (\Exception $e) {
             return ApiResponseService::error($e->getMessage(), 400);

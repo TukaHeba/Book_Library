@@ -12,14 +12,18 @@ class BookService
      * Retrieve all books with pagination.
      *
      * Eager load the ratings relationship and select the average rating.
+     * Use the scope for filtering
      * @return LengthAwarePaginator
      */
-    public function getAllBooks(): LengthAwarePaginator
+    public function getAllBooks(array $filters = []): LengthAwarePaginator
     {
         try {
             return Book::with(['ratings' => function ($query) {
-                $query->orderBy('created_at', 'desc'); // Order reviews by latest
-            }])->withAvg('ratings', 'rating')->paginate(10);
+                $query->orderBy('created_at', 'desc');
+            }])
+                ->withAvg('ratings', 'rating')
+                ->filter($filters)
+                ->paginate(10);
         } catch (\Exception $e) {
             Log::error('Failed to retrieve books: ' . $e->getMessage());
             throw new \Exception('Failed to retrieve books');
