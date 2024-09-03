@@ -63,6 +63,6 @@ Route::controller(BorrowRecordsController::class)->group(function () {
     Route::get('books/{bookId}/borrow-records', 'index');
     Route::get('books/{bookId}/borrow-records/{borrowRecordId}', 'show');
     Route::post('books/{bookId}/borrow-records', 'store')->middleware('auth:api');
-    Route::put('books/{bookId}/borrow-records/{borrowRecordId}', 'update')->middleware('auth:api');
-    Route::delete('books/{bookId}/borrow-records/{borrowRecordId}', 'destroy')->middleware('auth:api');
+    Route::put('books/{bookId}/borrow-records/{borrowRecordId}', 'update')->middleware(['auth:api', 'admin']);
+    Route::delete('books/{bookId}/borrow-records/{borrowRecordId}', 'destroy')->middleware(['auth:api', 'admin']);
 });
