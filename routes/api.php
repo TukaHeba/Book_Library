@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowRecordsController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\RatingController;
 use App\Http\Controllers\Api\UserController;
 
 /*
@@ -29,6 +30,7 @@ Route::controller(AuthController::class)->group(function () {
 
 // User Routes
 Route::apiResource('users', UserController::class)->middleware('auth:api');
+// Route::apiResource('ratings', RatingController::class);
 
 
 // Category Routes
@@ -48,6 +50,17 @@ Route::controller(BookController::class)->group(function () {
     Route::put('books/{id}', 'update')->middleware(['auth:api', 'admin']);
     Route::delete('books/{id}', 'destroy')->middleware(['auth:api', 'admin']);
 });
+
+// Rating Routes
+Route::controller(RatingController::class)->group(function () {
+    Route::get('books/{bookId}/ratings', 'index');
+    Route::get('books/{bookId}/ratings/{ratingId}', 'show');
+    Route::post('books/{bookId}/ratings', 'store')->middleware('auth:api');
+    Route::put('books/{bookId}/ratings/{ratingId}', 'update')->middleware('auth:api');
+    Route::delete('books/{bookId}/ratings/{ratingId}', 'destroy')->middleware('auth:api');
+});
+
+
 
 // Route::controller(BorrowRecordsController::class)->group(function () {
 //     Route::get('borrow-records', 'index')->middleware(['auth:api', 'role:admin']);
