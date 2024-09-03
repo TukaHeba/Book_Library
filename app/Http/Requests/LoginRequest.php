@@ -83,7 +83,7 @@ class LoginRequest extends FormRequest
     {
         $errors = $validator->errors()->all();
         throw new HttpResponseException(
-            ApiResponseService::error($errors, 'Validation Errors', 422)
+            ApiResponseService::error($errors, 'A server error has occurred', 422)
         );
     }
 
@@ -98,13 +98,13 @@ class LoginRequest extends FormRequest
 
         if (!$user) {
             throw new HttpResponseException(
-                ApiResponseService::error(['The provided email does not exist.'], 'Authentication Error', 401)
+                ApiResponseService::error(['The provided email does not exist.'], 'A server error has occurred', 401)
             );
         }
 
         if (!Hash::check($this->password, $user->password)) {
             throw new HttpResponseException(
-                ApiResponseService::error(['The provided password is incorrect.'], 'Authentication Error', 401)
+                ApiResponseService::error(['The provided password is incorrect.'], 'A server error has occurred', 401)
             );
         }
     }
