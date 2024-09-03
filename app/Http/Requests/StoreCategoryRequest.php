@@ -77,7 +77,7 @@ class StoreCategoryRequest extends FormRequest
     {
         $errors = $validator->errors()->all();
         throw new HttpResponseException(
-            ApiResponseService::error($errors, 'Validation Errors', 422)
+            ApiResponseService::error($errors, 'A server error has occurred', 422)
         );
     }
 
