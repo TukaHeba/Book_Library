@@ -19,10 +19,7 @@ use App\Http\Controllers\Api\UserController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
+// Auth Routes
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
@@ -30,23 +27,27 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh')->middleware('auth:api');
 });
 
-Route::middleware('auth:api')->group(function () {
-    // User Routes
-    Route::apiResource('users', UserController::class);
+// User Routes
+Route::apiResource('users', UserController::class)->middleware('auth:api');
 
-    // Category Routes
-    Route::apiResource('categories', CategoryController::class);
 
-    // Book Routes
-    Route::apiResource('books', BookController::class);
-
-    // Borrow Records Routes
-    // Route::apiResource('borrow-records', BorrowRecordsController::class);
-    Route::post('/borrow-records', [BorrowRecordsController::class, 'store']);
+// Category Routes
+Route::controller(CategoryController::class)->group(function () {
+    Route::get('categories', 'index');
+    Route::get('categories/{id}', 'show');
+    Route::post('categories', 'store')->middleware(['auth:api', 'admin']);
+    Route::put('categories/{id}', 'update')->middleware(['auth:api', 'admin']);;
+    Route::delete('categories/{id}', 'destroy')->middleware(['auth:api', 'admin']);;
 });
 
-
-
+// Book Routes
+Route::controller(BookController::class)->group(function () {
+    Route::get('books', 'index');
+    Route::get('books/{id}', 'show');
+    Route::post('books', 'store')->middleware(['auth:api', 'admin']);
+    Route::put('books/{id}', 'update')->middleware(['auth:api', 'admin']);
+    Route::delete('books/{id}', 'destroy')->middleware(['auth:api', 'admin']);
+});
 
 // Route::controller(BorrowRecordsController::class)->group(function () {
 //     Route::get('borrow-records', 'index')->middleware(['auth:api', 'role:admin']);

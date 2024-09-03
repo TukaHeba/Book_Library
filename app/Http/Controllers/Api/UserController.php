@@ -31,8 +31,7 @@ class UserController extends Controller
     {
         $this->userService = $userService;
 
-        $this->middleware('role:admin');
-        // $this->middleware('role:client')->except(['index', 'store']);
+        $this->middleware('admin');
     }
 
     /**
