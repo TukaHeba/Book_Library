@@ -41,4 +41,41 @@ class BorrowRecords extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Check if the user can borrow a specific book.
+     *
+     * @param int $userId
+     * @param int $bookId
+     * @return bool
+     */
+    public static function canBorrow($userId, $bookId)
+    {
+        return !self::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->whereNull('returned_at')
+            ->exists();
+    }
+
+    /**
+     * Check if the book is overdue.
+     *
+     * @return bool
+     */
+    public function isOverdue()
+    {
+        return !$this->returned_at && $this->due_date->isPast();
+    }
+
+    /**
+     * Mark the book as returned.
+     *
+     * @return void
+     */
+    public function markAsReturned()
+    {
+        $this->returned_at = now();
+        $this->save();
+        $this->book->markAsAvailable();
+    }
 }

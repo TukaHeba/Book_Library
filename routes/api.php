@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\BorrowRecordsController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\UserController;
 
@@ -38,4 +39,19 @@ Route::middleware('auth:api')->group(function () {
 
     // Book Routes
     Route::apiResource('books', BookController::class);
+
+    // Borrow Records Routes
+    // Route::apiResource('borrow-records', BorrowRecordsController::class);
+    Route::post('/borrow-records', [BorrowRecordsController::class, 'store']);
 });
+
+
+
+
+// Route::controller(BorrowRecordsController::class)->group(function () {
+//     Route::get('borrow-records', 'index')->middleware(['auth:api', 'role:admin']);
+//     Route::post('borrow-records/book_id', 'store')->middleware(['auth:api', 'role:admin|client']);
+//     Route::get('borrow-records/{id}', 'show')->middleware(['auth:api', 'role:admin|client']);
+//     Route::put('borrow-records/{id}', 'update')->middleware(['auth:api', 'role:admin']);
+//     Route::delete('borrow-records/{id}', 'delete')->middleware(['auth:api', 'role:admin']);
+// });

@@ -23,6 +23,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -85,27 +86,33 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Check if the authenticated user can perform an action on the given user.
+     * Check if the user is an admin.
      * 
-     * @param User $user The user to check against.
-     * @return bool True if the authenticated user is an admin or the same user, false otherwise.
-     */
-    public function hasAction(User $user): bool
-    {
-        /** @var User $authUser */
-        $authUser = Auth::user();
-        return $authUser->hasRole('admin') || $authUser->id === $user->id;
-    }
-
-    /**
-     * Check if the authenticated user is an admin.
-     * 
-     * @return bool True if the authenticated user is an admin, false otherwise.
+     * @return bool True if the user is an admin, false otherwise.
      */
     public function isAdmin(): bool
     {
-        /** @var User $authUser */
-        $authUser = Auth::user();
-        return $authUser->hasRole('admin');
+        return $this->is_admin;
+    }
+
+    /**
+     * Check if the user is a client.
+     * 
+     * @return bool True if the user is a client, false otherwise.
+     */
+    public function isClient(): bool
+    {
+        return !$this->is_admin;
+    }
+
+    /**
+     * Check if the user is the owner of the given resource (typically another user or entity).
+     * 
+     * @param User $user The user to check ownership against.
+     * @return bool True if the authenticated user is the owner (i.e., the same user), false otherwise.
+     */
+    public function isOwner(User $user): bool
+    {
+        return $this->id === $user->id;
     }
 }

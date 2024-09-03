@@ -55,13 +55,7 @@ class Book extends Model
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Query scope to filter books
 
-     * @param mixed $query
-     * @param array $filters
-     * @return mixed
-     */
     /**
      * Apply filtering to the books query based on provided filters.
      *
@@ -92,5 +86,24 @@ class Book extends Model
         }
 
         return $query;
+    }
+
+
+
+    public function isAvailable()
+    {
+        return $this->available;
+    }
+
+    public function markAsBorrowed()
+    {
+        $this->available = false;
+        $this->save();
+    }
+
+    public function markAsAvailable()
+    {
+        $this->available = true;
+        $this->save();
     }
 }
