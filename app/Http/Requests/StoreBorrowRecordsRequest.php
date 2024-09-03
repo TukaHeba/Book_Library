@@ -25,11 +25,14 @@ class StoreBorrowRecordsRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
+        $bookId = $this->route('bookId');
+
         $this->merge([
             'user_id' => Auth::id(),
-            'borrowed_at' => $this->borrowed_at ? date('Y-m-d', strtotime($this->borrowed_at)) : now()->format('Y-m-d'),
-            'due_date' => $this->due_date ? date('Y-m-d', strtotime($this->due_date)) : now()->addDays(14)->format('Y-m-d'),
-            'returned_at' => null,
+            'book_id' => $bookId,
+            'borrowed_at' => $this->input('borrowed_at') ? date('Y-m-d', strtotime($this->input('borrowed_at'))) : now()->format('Y-m-d'),
+            'due_date' => $this->input('due_date') ? date('Y-m-d', strtotime($this->input('due_date'))) : now()->addDays(14)->format('Y-m-d'),
+            'returned_at' => $this->input('returned_at') ? date('Y-m-d', strtotime($this->input('returned_at'))) : null,
         ]);
     }
 
@@ -94,7 +97,7 @@ class StoreBorrowRecordsRequest extends FormRequest
             'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
         ];
     }
-    
+
     /**
      * Handle validation errors and throw an exception.
      *
